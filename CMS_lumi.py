@@ -7,17 +7,18 @@ import ROOT as rt
 #
 
 cmsText     = "CMS"
-cmsTextFont   = 61  
+#cmsTextFont   = 61  
+cmsTextFont   = 52
 
 writeExtraText = False
 extraText   = "Preliminary"
 extraTextFont = 52 
 
-lumiTextSize     = 0.6
+lumiTextSize     = 0.3
 lumiTextOffset   = 0.2
 
-cmsTextSize      = 0.75
-cmsTextOffset    = 0.1
+cmsTextSize      = 0.45
+cmsTextOffset    = 0.05
 
 relPosX    = 0.045
 relPosY    = 0.035
@@ -103,7 +104,7 @@ def CMS_lumi(pad,  iPeriod,  iPosX ):
     latex.SetTextAlign(31) 
     latex.SetTextSize(lumiTextSize*t)    
 
-    latex.DrawLatex(1-r,1-t+lumiTextOffset*t,lumiText)
+    latex.DrawLatex(1-3.6*r,1-t+lumiTextOffset*t,lumiText)
 
     if( outOfFrame ):
         latex.SetTextFont(cmsTextFont)

@@ -101,7 +101,7 @@ class Region{
         void setSuffix(std::string suffix);
         void initHisto(TFileDirectory &dir,int etabins,int ihbins,int pbins,int massbins);
         void fill(float& eta, float&p, float& pt, float& pterr, float& ih, float& ias, float& m, float& tof, float& w);
-        void fillPredMass(const std::string&,TF1&,TF1&,const int&,const int&,float weight_);
+        void fillPredMass(const std::string&,const std::string&,TF1&,TF1&,const int&,const int&,float weight_);
         void write();
 
         float K_;
@@ -224,7 +224,7 @@ void Region::fill(float& eta, float& p, float& pt, float& pterr, float& ih, floa
 // While combining the input for several couples leading to the same mass: 
 // contents are added 
 // errors: the sqrt of the squared uncertainties are added
-void Region::fillPredMass(const std::string& st_sample,TF1& f_p,TF1& f_ih,const int& fit_ih_err=1,const int& fit_p_err=1,float weight_=-1) {
+void Region::fillPredMass(const std::string& st, const std::string& st_sample,TF1& f_p,TF1& f_ih,const int& fit_ih_err=1,const int& fit_p_err=1,float weight_=-1) {
 
     TH1F* eta = (TH1F*) ih_eta->ProjectionX();
     float K=2.27, C=3.16;
@@ -237,7 +237,8 @@ void Region::fillPredMass(const std::string& st_sample,TF1& f_p,TF1& f_ih,const 
 
     bool useFitIh=true;
     bool useFitP=true;
-    ROOT::Math::IntegratorOneDimOptions::SetDefaultRelTolerance(1.E-6);
+    //ROOT::Math::IntegratorOneDimOptions::SetDefaultRelTolerance(1.E-6);
+    ROOT::Math::IntegratorOneDimOptions::SetDefaultRelTolerance(1.E-9);
 
     for(int i=1;i<eta->GetNbinsX()+1;i++)
     {
@@ -251,17 +252,81 @@ void Region::fillPredMass(const std::string& st_sample,TF1& f_p,TF1& f_ih,const 
         if(ih->GetEntries()<1) continue;
         if(p->GetEntries()<1) continue;
         float a=3., b=8, c=0, d=30; //range fits
+        //float a=3.25, b=8, c=0, d=30; //range fits
         TFitResultPtr ptr1 = 0;
-        if(useFitIh) ptr1 = ih->Fit(&f_ih,"QRS","",a,b);
+        float tmpIhIt = 10./75;
 
-        if(ptr1->Status()!=0) useFitIh=false;
+        float fct = (tmpIhIt * ih->Integral());
+        float stdDev_histIh = ih->GetStdDev();
+        float mean_histIh = ih->GetMean(); 
+        //f_ih.SetParLimits(0,0.0001,fct*1.5);
+        //f_ih.SetParLimits(1,3,mean_histIh*1.8);
+        //f_ih.SetParLimits(2,0.001,stdDev_histIh*1.5);
+
+
+        //f_ih.SetParLimits(0,0.0001,fct*2);
+        //f_ih.SetParLimits(1,3.5,6);
+        //f_ih.SetParLimits(2,0.001,0.5);
+
+
+        f_ih.SetParameter(0,fct);
+        f_ih.SetParameter(1,mean_histIh);
+        f_ih.SetParameter(2,stdDev_histIh);
+         
+        string namePreFit = "Pre_fits_ih_"+st+"_"+st_sample+"/Ih_fit_bad_eta_bin"+to_string(i)+".root";
+        //ih->SaveAs(namePreFit.c_str());
+
+        if(useFitIh) ptr1 = ih->Fit(&f_ih,"QRSL","",a,b);
+
+
+        //Fit minuit -> quel algo  ||  add M to test
+        if(ptr1->Status()!=0){ 
+            string nameTmp = "Wrong_fits_ih_"+st+"_"+st_sample+"/Ih_fit_bad_eta_bin"+to_string(i)+".root";
+            //ih->SaveAs(nameTmp.c_str());
+            string nameTmp2 = "Wrong_fits_ih_"+st+"_"+st_sample+"/Ih_only_fit_bad_eta_bin"+to_string(i)+".root";
+            //f_ih.SaveAs(nameTmp2.c_str());
+        }
         
+        else{
+            string nameTmp = "Good_fits_ih_"+st+"_"+st_sample+"/Ih_fit_good_eta_bin"+to_string(i)+".root";
+            //ih->SaveAs(nameTmp.c_str());
+            string nameTmp2 = "Good_fits_ih_"+st+"_"+st_sample+"/Ih_only_fit_good_eta_bin"+to_string(i)+".root";
+            //f_ih.SaveAs(nameTmp2.c_str());
+        }
+        
+        /*        
+        if(ptr1->Status()!=0){
+            a+=0.15;
+            ptr1 = ih->Fit(&f_ih,"QRSM","",a,b);
+        }
+        */
+
+ 
         TF1* const f_ih2=&f_ih;
         float intFih=f_ih2->Integral(a,b);
         float intIh=ih->Integral(ih->FindBin(a),ih->FindBin(b));
 
         float SFih=intIh/intFih;
         if(SFih<0) useFitIh=false;
+
+        if(intFih <= 0){
+            string nameTmp = "Wrong_fits_ih/Ih_fit_wrong_eta_bin"+to_string(i)+".root";
+            //ih->SaveAs(nameTmp.c_str());
+            std::cout<<"ERROR > INTEGRAL FIT IH IS <= 0. ITG = " << intFih << " FOR ETA BIN #" << i << std::endl;
+            std::cout <<" Status of fit : " << ptr1->Status() << std::endl;
+            int numParams = f_ih.GetNpar();
+            double params[numParams];
+            for (int i = 0; i < numParams; ++i) {
+                params[i] = f_ih.GetParameter(i);
+                std::cout<<"Parameter "<< i << " of IH fit is -> " << params[i] <<std::endl;
+            }
+        }
+        else{
+            string nameTmp = "Good_fits_ih/Ih_fit_good_eta_bin"+to_string(i)+".root";
+            //ih->SaveAs(nameTmp.c_str());
+            //std::cout <<"Integral fit not wrong, status of fit : " << ptr1->Status() << std::endl;
+
+        }
 
         TF1* f_ih3=f_ih2;
         const double* fit_ih_params = ptr1->GetParams();
@@ -279,12 +344,43 @@ void Region::fillPredMass(const std::string& st_sample,TF1& f_p,TF1& f_ih,const 
         incrFit++;
 
         if(useFitP) ptr2 = p->Fit(&f_p,"QRS","",c,d);
+
+        /*
+        int numParams = f_p.GetNpar();
+        double params[numParams];
+        double paramErrors[numParams];
+        for (int i = 0; i < numParams; ++i) {
+            params[i] = f_p.GetParameter(i);
+            paramErrors[i] = f_p.GetParError(i);
+            std::cout<<"Parameter "<< i << " of IH fit is -> " << params[i] << " +|- :"<< paramErrors[i] << std::endl;
+        } 
+        
+        string nameTmp2 = "Good_fits_p_"+st+"_"+st_sample+"/P_only_fit_good_eta_bin"+to_string(i)+".root";
+        p->SaveAs(nameTmp2.c_str());
+        */
         TF1* f_p2=&f_p;
         
         float intFp=1;
         if(useFitP){ 
             ROOT::Math::IntegratorOneDim intOneDim_p(*f_p2,ROOT::Math::IntegrationOneDim::kGAUSS);
             intFp=intOneDim_p.Integral(c,d);
+        }
+        if(intFp <= 0){
+            std::cout<<"ERROR > INTEGRAL FIT P IS <= 0. ITG = " << intFp <<std::endl;
+            string nameTmp = "Wrong_fits_p/P_fit_wrong_eta_bin"+to_string(i)+".root";
+            //p->SaveAs(nameTmp.c_str());
+            int numParams = f_p.GetNpar();
+            double params[numParams];
+            for (int i = 0; i < numParams; ++i) {
+                params[i] = f_p.GetParameter(i);
+                std::cout<<"Parameter "<< i << " of P fit is -> " << params[i] <<std::endl;
+            }
+        }
+        else{
+            string nameTmp = "Good_fits_p/P_fit_good_eta_bin"+to_string(i)+".root";
+            //p->SaveAs(nameTmp.c_str());
+            //std::cout <<"Integral fit not wrong, status of fit : " << ptr1->Status() << std::endl;
+
         }
         
         float intP=p->Integral(p->FindBin(c),p->FindBin(d));
@@ -295,12 +391,24 @@ void Region::fillPredMass(const std::string& st_sample,TF1& f_p,TF1& f_ih,const 
         statusFit=ptr2->Status();
         
         }
-        if(statusFit!=0) useFitP=false;
+        if(statusFit!=0){
+            string nameTmp = "Wrong_fits_p_"+st+"_"+st_sample+"/P_fit_wrong_eta_bin"+to_string(i)+".root";
+            //p->SaveAs(nameTmp.c_str());
+            string nameTmp2 = "Wrong_fits_p_"+st+"_"+st_sample+"/P_only_fit_wrong_eta_bin"+to_string(i)+".root";
+            //f_p.SaveAs(nameTmp2.c_str());
+            //useFitP=false;
+        }
+        else{
+            string nameTmp = "Good_fits_p_"+st+"_"+st_sample+"/P_fit_good_eta_bin"+to_string(i)+".root";
+            //p->SaveAs(nameTmp.c_str());
+            string nameTmp2 = "Good_fits_p_"+st+"_"+st_sample+"/P_only_fit_good_eta_bin"+to_string(i)+".root";
+            //f_p.SaveAs(nameTmp2.c_str());
 
+        }
         ROOT::Math::IntegratorOneDim intOneDimFP3(*f_p3,ROOT::Math::IntegrationOneDim::kGAUSS);
         
-        useFitIh=true;
-        useFitP=true;
+        //useFitIh=true;
+        //useFitP=true;
 
         for(int j=1;j<p->GetNbinsX()+2;j++)
         {
@@ -355,6 +463,10 @@ void Region::fillPredMass(const std::string& st_sample,TF1& f_p,TF1& f_ih,const 
                                 mass = GetMass(invMom,dedx,K,C);
                                 bin_mass = pred_mass->FindBin(mass);
                                 pred_mass->SetBinContent(bin_mass,pred_mass->GetBinContent(bin_mass)+weight);
+                                if( std::isnan(pred_mass->GetBinContent(bin_mass)+weight)){
+                                    //std::cout << "ERROR : BIN CONTENT SET IS NAN !!" << std::endl;
+
+                                }
                                 pred_mass_fitIh_fitP->SetBinContent(bin_mass,pred_mass_fitIh_fitP->GetBinContent(bin_mass)+weight);
                                 ih_p_cross1D_fit->SetBinContent(j,k,ih_p_cross1D_fit->GetBinContent(j,k)+weight);
                             }
@@ -367,6 +479,11 @@ void Region::fillPredMass(const std::string& st_sample,TF1& f_p,TF1& f_ih,const 
                             mass = GetMass(invMom,dedx,K,C);
                             bin_mass = pred_mass->FindBin(mass);
                             pred_mass->SetBinContent(bin_mass,pred_mass->GetBinContent(bin_mass)+weight);
+                            if( std::isnan(pred_mass->GetBinContent(bin_mass)+weight)){
+                                //std::cout<<"Setting pred_mass bin #["<<bin_mass<< "] with : " << pred_mass->GetBinContent(bin_mass)+weight << std::endl; 
+                                //std::cout << "ERROR : BIN CONTENT SET IS NAN !!" << std::endl;
+                            }
+                            //std::cout<<"Setting pred_mass bin #["<<bin_mass<< "] with : " << pred_mass->GetBinContent(bin_mass)+weight << std::endl; 
                             pred_mass_fitIh->SetBinContent(bin_mass,pred_mass_fitIh->GetBinContent(bin_mass)+weight);
                             ih_p_cross1D_fit->SetBinContent(j,k,ih_p_cross1D_fit->GetBinContent(j,k)+weight);
                         }
@@ -388,6 +505,12 @@ void Region::fillPredMass(const std::string& st_sample,TF1& f_p,TF1& f_ih,const 
                             mass = GetMass(invMom,dedx,K,C);
                             bin_mass = pred_mass->FindBin(mass);
                             pred_mass->SetBinContent(bin_mass,pred_mass->GetBinContent(bin_mass)+weight);
+                            if( std::isnan(pred_mass->GetBinContent(bin_mass)+weight)){
+                                //std::cout<<"Setting pred_mass bin #["<<bin_mass<< "] with : " << pred_mass->GetBinContent(bin_mass)+weight << std::endl; 
+                                //std::cout << "ERROR : BIN CONTENT SET IS NAN !!" << std::endl;
+
+                            }
+                            //std::cout<<"Setting pred_mass bin #["<<bin_mass<< "] with : " << pred_mass->GetBinContent(bin_mass)+weight << std::endl; 
                             pred_mass_fitP->SetBinContent(bin_mass,pred_mass_fitP->GetBinContent(bin_mass)+weight);
                             ih_p_cross1D_fit->SetBinContent(j,k,ih_p_cross1D_fit->GetBinContent(j,k)+weight);
                         }
@@ -401,7 +524,14 @@ void Region::fillPredMass(const std::string& st_sample,TF1& f_p,TF1& f_ih,const 
                         invMom = 10000./p->GetBinCenter(j);
                         mass = GetMass(invMom,dedx,K,C);
                         bin_mass = pred_mass->FindBin(mass);
+                        
                         pred_mass->SetBinContent(bin_mass,pred_mass->GetBinContent(bin_mass)+weight);
+                        //std::cout<<"Setting pred_mass bin #["<<bin_mass<< "] with : " << pred_mass->GetBinContent(bin_mass)+weight << std::endl; 
+                        if( std::isnan(pred_mass->GetBinContent(bin_mass)+weight)){
+                            //std::cout<<"Setting pred_mass bin #["<<bin_mass<< "] with : " << pred_mass->GetBinContent(bin_mass)+weight << std::endl; 
+                            //std::cout << "ERROR : BIN CONTENT SET IS NAN !!" << std::endl;
+                        }
+                        //if NAN -> display error big
                         pred_mass_noFit->SetBinContent(bin_mass,pred_mass_noFit->GetBinContent(bin_mass)+weight);
                         ih_p_cross1D_fit->SetBinContent(j,k,ih_p_cross1D_fit->GetBinContent(j,k)+weight);
                     }
@@ -437,8 +567,12 @@ void loadHistograms(Region& r, TFile* f, const std::string& regionName, bool boo
     std::string dir = "analyzer/BaseName/";
     dir="";
     //dir = "HSCParticleAnalyzer/SigmaPt3_iso2_IhCut1_PtCut1/";
+    //HERE IS GOOD ONE 
+    //dir = "HSCParticleAnalyzer/SigmaPt3_iso2_IhCut2_PtCut1/";
+
     //dir = "HSCParticleAnalyzer/ih0_sigmapt2_iso1/";
     dir = "HSCParticleAnalyzer/BaseName/";
+    //dir="";
     cout<<"loading region "<<regionName<<endl;
     //r.ih_p_eta                          = (TH3F*)f->Get((dir+"ih_p_eta_"+regionName).c_str())->Clone(); if(bool_rebin) r.ih_p_eta->Rebin3D(rebineta,rebinp,rebinih);
     r.ih_p_eta                          = NULL;
@@ -535,7 +669,8 @@ void overflowLastBin(TH1F* h){
 // rebinning histogram according to an array of bins
 TH1F* rebinHisto(TH1F* h){
     //overflowLastBin(h);
-    double xbins[33]={0.,20.,40.,60.,80.,100.,120.,140.,160.,180.,200.,220.,240.,260.,280.,300.,320.,340.,360.,380.,405.,435.,475.,525.,585.,660.,755.,875.,1025.,1210.,1440.,1730.,2000.};
+    //double xbins[33]={0.,20.,40.,60.,80.,100.,120.,140.,160.,180.,200.,220.,240.,260.,280.,300.,320.,340.,360.,380.,405.,435.,475.,525.,585.,660.,755.,875.,1025.,1210.,1440.,1730.,2000.};
+    double xbins[33]={0.,20.,40.,60.,80.,100.,120.,140.,160.,180.,200.,220.,240.,260.,280.,300.,320.,340.,360.,380.,410.,440.,480.,530.,590.,660.,760.,880.,1030.,1210.,1440.,1730.,2000.};
     std::vector<double> xbins_v;
     for(double i=0.0;i<=1000.0;i+=50) xbins_v.push_back(i);
     std::string newname = h->GetName(); 
@@ -653,6 +788,7 @@ TCanvas* plotting(TH1F* h1, TH1F* h2, bool ratioSimple=true, std::string dirname
     h1->Write();
     h2->SetName((name+"_pred").c_str());
     h2->Write();
+    
     cout<<"chi2: "<<h1->Chi2Test(h2)<<endl;
     c1->cd(2);
     TH1F* tmp = (TH1F*) h1->Clone(); tmp->Reset();
@@ -719,20 +855,58 @@ void bckgEstimate(const std::string& st_sample, const std::string& dirname, cons
     //TH2F c_p_npv_base(*c.p_npv);
     TH1F d_mass_base(*d.mass);
 
+    TFitResultPtr ptr_pinc = 0;
+    TH1F* p_base = (TH1F*)c_eta_p_base.ProjectionX();
+    
+    TF1 f_p_base("f_p_base","[0]*([1]+erf((log(x)-[2])/[3]))",0,90);
+    f_p_base.SetParameter(0,560);
+    f_p_base.FixParameter(1,1.0);
+    f_p_base.SetParameter(2,3.50116e+00);
+    f_p_base.SetParameter(3,0.60152e+00);
 
-    auto workItem = [] (UInt_t workerID,const std::string& st_sample, const std::string& dirname, const Region& B, const Region& C, const Region& BC, const Region& A, const Region& D, const std::string& st, const int& nPE=200, const bool& corrTemplateIh=false, const bool& corrTemplateP=false, const int& fitIh=1, const int& fitP=1, bool blind=false, const int& rebinMass=1){
+    ptr_pinc = p_base->Fit(&f_p_base,"QRSL","",0,30);
+
+    p_base->SaveAs("p_base_for_fit.root");
+    std::cout<<"Did the initial all inclusive P fit:" <<std::endl;
+    int numParams = f_p_base.GetNpar();
+    double params[numParams];
+    double paramErrors[numParams];
+    for (int i = 0; i < numParams; ++i) {
+        params[i] = f_p_base.GetParameter(i);
+        paramErrors[i] = f_p_base.GetParError(i);
+        std::cout<<"Parameter "<< i << " of IH fit is -> " << params[i] << " +|- :"<< paramErrors[i] << std::endl;
+    }
+    double par_p2 = params[2];
+    double par_p3 = params[3];
+    
+    auto workItem = [] (UInt_t workerID,const std::string& st_sample, const std::string& dirname, const Region& B, const Region& C, const Region& BC, const Region& A, const Region& D, const std::string& st, const int& nPE=200, const bool& corrTemplateIh=false, const bool& corrTemplateP=false, const int& fitIh=1, const int& fitP=1, bool blind=false, const int& rebinMass=1,const double& par_p2=4.70839,const double& par_p3=1.05005){
 
         cout<<"workerId: "<<workerID<<endl;
+        //double par_p2 =4.70839; 
+        //double par_p3 =1.05005; 
 
         TF1 f_p("f_p","[0]*([1]+erf((log(x)-[2])/[3]))",0,90);
-        f_p.SetParameter(0,1);
+        //Borner les parametres
+        //f_p.SetParameter(0,7800);
+        f_p.SetParLimits(0,0,9000);
         f_p.FixParameter(1,1.0);
-        f_p.SetParameter(2,5.10116e+00);
-        f_p.SetParameter(3,1.10152e+00);
+        //f_p.SetParLimits(2,par_p2-1,par_p2+1);
+        //f_p.SetParLimits(3,par_p3-0.5,par_p3+0.5);
+        
+        f_p.FixParameter(2,par_p2);
+        f_p.FixParameter(3,par_p3);
+
+        //f_p.SetParameter(2,5.10116e+00);
+        //f_p.SetParameter(3,1.10152e+00);
         TF1 f_ih("f_ih","gaus",3.25,8);
+        //Borner les parametres (norm + width positiv)
         f_ih.SetParameter(0,7.05442e-03);
         f_ih.SetParameter(1,3.34e+00);
         f_ih.SetParameter(2,1.59e-01);
+        //f_ih.SetParLimits(0,0,1.4e-02);
+        //f_ih.SetParLimits(1,0,7e+00);
+        //f_ih.SetParLimits(2,0,3e-01);
+        
 
         Region bc = BC;
         Region d = D;
@@ -780,10 +954,10 @@ void bckgEstimate(const std::string& st_sample, const std::string& dirname, cons
         float normB = b_ih_eta->Integral(0,b_ih_eta->GetNbinsX()+1);
         float normC = c_eta_p->Integral(0,c_eta_p->GetNbinsX()+1);
 
-        bc.fillPredMass(st_sample,f_p,f_ih,fitIh,fitP);
+        bc.fillPredMass(st,st_sample,f_p,f_ih,fitIh,fitP);
         normalisationABC=normB*normC/normA;
         bc.pred_mass->Scale(normalisationABC/bc.pred_mass->Integral());
-        float sfMass = d_mass->Integral()/bc.pred_mass->Integral();
+        //float sfMass = d_mass->Integral()/bc.pred_mass->Integral();
 
         delete a_ih_eta;
         delete b_ih_eta;
@@ -797,13 +971,15 @@ void bckgEstimate(const std::string& st_sample, const std::string& dirname, cons
     // Create the pool of workers
     ROOT::TProcessExecutor workers(25);
     // Fill the pool with work
-    auto workItemToRun = std::bind (workItem, _1, st_sample,dirname,B,C,BC,A,D,st,nPE,corrTemplateIh,corrTemplateP,fitIh,fitP,blind,rebinMass);
+    auto workItemToRun = std::bind (workItem, _1, st_sample,dirname,B,C,BC,A,D,st,nPE,corrTemplateIh,corrTemplateP,fitIh,fitP,blind,rebinMass,par_p2,par_p3);
     auto vPE = workers.Map(workItemToRun, ROOT::TSeqI(nPE));
 
     TH1F h_temp = meanHistoPE(vPE);
+    std::cout<<"Mean histo of all PE entries : " << h_temp.GetEntries() << " , and integral : " << h_temp.Integral() << std::endl;
+    std::cout<<"Mean histo of bc.pred_mass BEFORE changing it to NPE : " << bc.pred_mass->GetEntries() << " , and integral : " << bc.pred_mass->Integral() << std::endl;
     if(nPE>1) bc.pred_mass = &h_temp;
 
-    TH1F* htemp = &h_temp;
+    //TH1F* htemp = &h_temp;
 
     if(blind) {
         blindMass(d.mass,300);
@@ -813,9 +989,15 @@ void bckgEstimate(const std::string& st_sample, const std::string& dirname, cons
     //saveHistoRatio(d.mass,bc.pred_mass_correction,("mass_obs_"+st).c_str(),("mass_predBC_corr_"+st).c_str(),("mass_predBCR_corr_"+st).c_str());
     //saveHistoRatio(d.mass,bc.pred_mass,("mass_obs_"+st).c_str(),("mass_predBC_"+st).c_str(),("mass_predBCR_"+st).c_str(),true);
     //saveHistoRatio(d.mass,bc.pred_mass_correction,("mass_obs_"+st).c_str(),("mass_predBC_corr_"+st).c_str(),("mass_predBCR_corr_"+st).c_str(),true);
-    
+   
+    std::cout<<"Before overflow : bc.pred_mass entries : " << bc.pred_mass->GetEntries() << " and d.mass entries : " << d.mass->GetEntries() << std::endl; 
+    std::cout<<"Before overflow : bc.pred_mass integral : " << bc.pred_mass->Integral() << " and d.mass integral : " << d.mass->Integral() << std::endl; 
     overflowLastBin(d.mass);
     overflowLastBin(bc.pred_mass);
+
+
+    bc.pred_mass->Write();
+    d.mass->Write();
 
     A.ih_eta->Write();
     A.eta_p->Write();
@@ -837,6 +1019,9 @@ void bckgEstimate(const std::string& st_sample, const std::string& dirname, cons
     C.eta_p->ProjectionX()->Write();   
     C.eta_p->ProjectionY()->Write();   
 
+    std::cout<<"Before plotting"<<std::endl;
+    std::cout<<"After overflow : bc.pred_mass entries : " << bc.pred_mass->GetEntries() << " and d.mass entries : " << d.mass->GetEntries() << std::endl; 
+    std::cout<<"After overflow : bc.pred_mass integral : " << bc.pred_mass->Integral() << " and d.mass integral : " << d.mass->Integral() << std::endl; 
 
     plotting(d.mass,bc.pred_mass,false,dirname,("mass1D_regionBC_"+st+"_nPE-"+to_string(nPE)).c_str(),"Observed","Prediction",true,true,false)->Write();
     //plotting(d.mass,bc.pred_mass,false,dirname,("mass1D_regionBC_"+st+"_nPE-"+to_string(nPE)).c_str(),"Observed","Prediction",false,true,true)->Write();

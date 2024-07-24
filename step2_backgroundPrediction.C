@@ -1,3 +1,4 @@
+    //************************************************************************************
 // Usage:
 // root -l -q -b step2_backgroundPrediction.C
 
@@ -121,7 +122,8 @@ void step2_backgroundPrediction(){
     Region rbc_true_b;
     Region rbc_true_c;
     
-   
+    std::string Ext = "_testIhPt";   
+    Ext = "";
     // loading histograms used to validate the background estimate method in data --> base on Ias slices 
     // ------------------------------------------------------------------------------------------------------
     
@@ -164,56 +166,56 @@ void step2_backgroundPrediction(){
     loadHistograms(rbc_999ias100,ifile,"regionD_999",bool_rebin,rebineta,rebinp,rebinih,rebinmass,"regionBC_999_100");
 */
 
-    loadHistograms(ra_ias50,ifile,"regionA_ias50",bool_rebin,rebineta,rebinp,rebinih,rebinmass); 
-    loadHistograms(rc_ias50,ifile,"regionC_ias50",bool_rebin,rebineta,rebinp,rebinih,rebinmass); 
+    loadHistograms(ra_ias50,ifile,"regionA_ias50"+Ext,bool_rebin,rebineta,rebinp,rebinih,rebinmass); 
+    loadHistograms(rc_ias50,ifile,"regionC_ias50"+Ext,bool_rebin,rebineta,rebinp,rebinih,rebinmass); 
     
-    loadHistograms(rb_50ias60,ifile,"regionB_50ias60",bool_rebin,rebineta,rebinp,rebinih,rebinmass); 
-    loadHistograms(rb_60ias70,ifile,"regionB_60ias70",bool_rebin,rebineta,rebinp,rebinih,rebinmass); 
-    loadHistograms(rb_70ias80,ifile,"regionB_70ias80",bool_rebin,rebineta,rebinp,rebinih,rebinmass); 
-    loadHistograms(rb_80ias90,ifile,"regionB_80ias90",bool_rebin,rebineta,rebinp,rebinih,rebinmass); 
-    loadHistograms(rb_50ias90,ifile,"regionB_50ias90",bool_rebin,rebineta,rebinp,rebinih,rebinmass); 
-    loadHistograms(rb_90ias100,ifile,"regionB_90ias100",bool_rebin,rebineta,rebinp,rebinih,rebinmass); 
-    loadHistograms(rb_99ias100,ifile,"regionB_99ias100",bool_rebin,rebineta,rebinp,rebinih,rebinmass); 
-    loadHistograms(rb_999ias100,ifile,"regionB_999ias100",bool_rebin,rebineta,rebinp,rebinih,rebinmass); 
+    loadHistograms(rb_50ias60,ifile,"regionB_50ias60"+Ext,bool_rebin,rebineta,rebinp,rebinih,rebinmass); 
+    loadHistograms(rb_60ias70,ifile,"regionB_60ias70"+Ext,bool_rebin,rebineta,rebinp,rebinih,rebinmass); 
+    loadHistograms(rb_70ias80,ifile,"regionB_70ias80"+Ext,bool_rebin,rebineta,rebinp,rebinih,rebinmass); 
+    loadHistograms(rb_80ias90,ifile,"regionB_80ias90"+Ext,bool_rebin,rebineta,rebinp,rebinih,rebinmass); 
+    loadHistograms(rb_50ias90,ifile,"regionB_50ias90"+Ext,bool_rebin,rebineta,rebinp,rebinih,rebinmass); 
+    loadHistograms(rb_90ias100,ifile,"regionB_90ias100"+Ext,bool_rebin,rebineta,rebinp,rebinih,rebinmass); 
+    loadHistograms(rb_99ias100,ifile,"regionB_99ias100"+Ext,bool_rebin,rebineta,rebinp,rebinih,rebinmass); 
+    loadHistograms(rb_999ias100,ifile,"regionB_999ias100"+Ext,bool_rebin,rebineta,rebinp,rebinih,rebinmass); 
 
-    loadHistograms(rd_50ias60,ifile,"regionD_50ias60",bool_rebin,rebineta,rebinp,rebinih,rebinmass); 
-    loadHistograms(rd_60ias70,ifile,"regionD_60ias70",bool_rebin,rebineta,rebinp,rebinih,rebinmass); 
-    loadHistograms(rd_70ias80,ifile,"regionD_70ias80",bool_rebin,rebineta,rebinp,rebinih,rebinmass); 
-    loadHistograms(rd_80ias90,ifile,"regionD_80ias90",bool_rebin,rebineta,rebinp,rebinih,rebinmass); 
-    loadHistograms(rd_50ias90,ifile,"regionD_50ias90",bool_rebin,rebineta,rebinp,rebinih,rebinmass); 
-    loadHistograms(rd_90ias100,ifile,"regionD_90ias100",bool_rebin,rebineta,rebinp,rebinih,rebinmass);
-    loadHistograms(rd_99ias100,ifile,"regionD_99ias100",bool_rebin,rebineta,rebinp,rebinih,rebinmass);
-    loadHistograms(rd_999ias100,ifile,"regionD_999ias100",bool_rebin,rebineta,rebinp,rebinih,rebinmass);
+    loadHistograms(rd_50ias60,ifile,"regionD_50ias60"+Ext,bool_rebin,rebineta,rebinp,rebinih,rebinmass); 
+    loadHistograms(rd_60ias70,ifile,"regionD_60ias70"+Ext,bool_rebin,rebineta,rebinp,rebinih,rebinmass); 
+    loadHistograms(rd_70ias80,ifile,"regionD_70ias80"+Ext,bool_rebin,rebineta,rebinp,rebinih,rebinmass); 
+    loadHistograms(rd_80ias90,ifile,"regionD_80ias90"+Ext,bool_rebin,rebineta,rebinp,rebinih,rebinmass); 
+    loadHistograms(rd_50ias90,ifile,"regionD_50ias90"+Ext,bool_rebin,rebineta,rebinp,rebinih,rebinmass); 
+    loadHistograms(rd_90ias100,ifile,"regionD_90ias100"+Ext,bool_rebin,rebineta,rebinp,rebinih,rebinmass);
+    loadHistograms(rd_99ias100,ifile,"regionD_99ias100"+Ext,bool_rebin,rebineta,rebinp,rebinih,rebinmass);
+    loadHistograms(rd_999ias100,ifile,"regionD_999ias100"+Ext,bool_rebin,rebineta,rebinp,rebinih,rebinmass);
      
-    loadHistograms(rbc_50ias60,ifile,"regionD_50ias60",bool_rebin,rebineta,rebinp,rebinih,rebinmass); 
-    loadHistograms(rbc_60ias70,ifile,"regionD_60ias70",bool_rebin,rebineta,rebinp,rebinih,rebinmass); 
-    loadHistograms(rbc_70ias80,ifile,"regionD_70ias80",bool_rebin,rebineta,rebinp,rebinih,rebinmass); 
-    loadHistograms(rbc_80ias90,ifile,"regionD_80ias90",bool_rebin,rebineta,rebinp,rebinih,rebinmass); 
-    loadHistograms(rbc_50ias90,ifile,"regionD_50ias90",bool_rebin,rebineta,rebinp,rebinih,rebinmass); 
-    loadHistograms(rbc_90ias100,ifile,"regionD_90ias100",bool_rebin,rebineta,rebinp,rebinih,rebinmass);
-    loadHistograms(rbc_99ias100,ifile,"regionD_99ias100",bool_rebin,rebineta,rebinp,rebinih,rebinmass);
-    loadHistograms(rbc_999ias100,ifile,"regionD_999ias100",bool_rebin,rebineta,rebinp,rebinih,rebinmass);
+    loadHistograms(rbc_50ias60,ifile,"regionD_50ias60"+Ext,bool_rebin,rebineta,rebinp,rebinih,rebinmass); 
+    loadHistograms(rbc_60ias70,ifile,"regionD_60ias70"+Ext,bool_rebin,rebineta,rebinp,rebinih,rebinmass); 
+    loadHistograms(rbc_70ias80,ifile,"regionD_70ias80"+Ext,bool_rebin,rebineta,rebinp,rebinih,rebinmass); 
+    loadHistograms(rbc_80ias90,ifile,"regionD_80ias90"+Ext,bool_rebin,rebineta,rebinp,rebinih,rebinmass); 
+    loadHistograms(rbc_50ias90,ifile,"regionD_50ias90"+Ext,bool_rebin,rebineta,rebinp,rebinih,rebinmass); 
+    loadHistograms(rbc_90ias100,ifile,"regionD_90ias100"+Ext,bool_rebin,rebineta,rebinp,rebinih,rebinmass);
+    loadHistograms(rbc_99ias100,ifile,"regionD_99ias100"+Ext,bool_rebin,rebineta,rebinp,rebinih,rebinmass);
+    loadHistograms(rbc_999ias100,ifile,"regionD_999ias100"+Ext,bool_rebin,rebineta,rebinp,rebinih,rebinmass);
 
-    loadHistograms(rb_true,ifile,"regionD_50ias90",bool_rebin,rebineta,rebinp,rebinih,rebinmass); 
-    loadHistograms(rc_true,ifile,"regionD_50ias90",bool_rebin,rebineta,rebinp,rebinih,rebinmass); 
+    loadHistograms(rb_true,ifile,"regionD_50ias90"+Ext,bool_rebin,rebineta,rebinp,rebinih,rebinmass); 
+    loadHistograms(rc_true,ifile,"regionD_50ias90"+Ext,bool_rebin,rebineta,rebinp,rebinih,rebinmass); 
 
-    loadHistograms(rb_true_50ias60,ifile,"regionD_50ias60",bool_rebin,rebineta,rebinp,rebinih,rebinmass); 
-    loadHistograms(rc_true_50ias60,ifile,"regionD_50ias60",bool_rebin,rebineta,rebinp,rebinih,rebinmass); 
+    loadHistograms(rb_true_50ias60,ifile,"regionD_50ias60"+Ext,bool_rebin,rebineta,rebinp,rebinih,rebinmass); 
+    loadHistograms(rc_true_50ias60,ifile,"regionD_50ias60"+Ext,bool_rebin,rebineta,rebinp,rebinih,rebinmass); 
 
-    loadHistograms(rb_true_60ias70,ifile,"regionD_60ias70",bool_rebin,rebineta,rebinp,rebinih,rebinmass); 
-    loadHistograms(rc_true_60ias70,ifile,"regionD_60ias70",bool_rebin,rebineta,rebinp,rebinih,rebinmass); 
+    loadHistograms(rb_true_60ias70,ifile,"regionD_60ias70"+Ext,bool_rebin,rebineta,rebinp,rebinih,rebinmass); 
+    loadHistograms(rc_true_60ias70,ifile,"regionD_60ias70"+Ext,bool_rebin,rebineta,rebinp,rebinih,rebinmass); 
 
-    loadHistograms(rb_true_70ias80,ifile,"regionD_70ias80",bool_rebin,rebineta,rebinp,rebinih,rebinmass); 
-    loadHistograms(rc_true_70ias80,ifile,"regionD_70ias80",bool_rebin,rebineta,rebinp,rebinih,rebinmass); 
+    loadHistograms(rb_true_70ias80,ifile,"regionD_70ias80"+Ext,bool_rebin,rebineta,rebinp,rebinih,rebinmass); 
+    loadHistograms(rc_true_70ias80,ifile,"regionD_70ias80"+Ext,bool_rebin,rebineta,rebinp,rebinih,rebinmass); 
 
-    loadHistograms(rb_true_80ias90,ifile,"regionD_80ias90",bool_rebin,rebineta,rebinp,rebinih,rebinmass); 
-    loadHistograms(rc_true_80ias90,ifile,"regionD_80ias90",bool_rebin,rebineta,rebinp,rebinih,rebinmass); 
+    loadHistograms(rb_true_80ias90,ifile,"regionD_80ias90"+Ext,bool_rebin,rebineta,rebinp,rebinih,rebinmass); 
+    loadHistograms(rc_true_80ias90,ifile,"regionD_80ias90"+Ext,bool_rebin,rebineta,rebinp,rebinih,rebinmass); 
 
-    loadHistograms(rb_true_50ias90,ifile,"regionD_50ias90",bool_rebin,rebineta,rebinp,rebinih,rebinmass); 
-    loadHistograms(rc_true_50ias90,ifile,"regionD_50ias90",bool_rebin,rebineta,rebinp,rebinih,rebinmass); 
+    loadHistograms(rb_true_50ias90,ifile,"regionD_50ias90"+Ext,bool_rebin,rebineta,rebinp,rebinih,rebinmass); 
+    loadHistograms(rc_true_50ias90,ifile,"regionD_50ias90"+Ext,bool_rebin,rebineta,rebinp,rebinih,rebinmass); 
 
-    loadHistograms(rb_true_90ias100,ifile,"regionD_90ias100",bool_rebin,rebineta,rebinp,rebinih,rebinmass); 
-    loadHistograms(rc_true_90ias100,ifile,"regionD_90ias100",bool_rebin,rebineta,rebinp,rebinih,rebinmass); 
+    loadHistograms(rb_true_90ias100,ifile,"regionD_90ias100"+Ext,bool_rebin,rebineta,rebinp,rebinih,rebinmass); 
+    loadHistograms(rc_true_90ias100,ifile,"regionD_90ias100"+Ext,bool_rebin,rebineta,rebinp,rebinih,rebinmass); 
 
 
 /*    loadHistograms(ra_ias50,ifile,"regA_ias50",bool_rebin,rebineta,rebinp,rebinih,rebinmass); 
@@ -252,15 +254,16 @@ void step2_backgroundPrediction(){
     // estimate the background in different Ias slices, each containing 10% of the statistic 
     // ------------------------------------------------------------------------------------------------------
 
-    //bckgEstimate(st_sample, dirname, rb_50ias60, rc_ias50, rbc_50ias60, ra_ias50, rd_50ias60, "50ias60", nPE, corrTemplateIh, corrTemplateP, fitIh, fitP, false);
-    //bckgEstimate(st_sample, dirname, rb_60ias70, rc_ias50, rbc_60ias70, ra_ias50, rd_60ias70, "60ias70", nPE, corrTemplateIh, corrTemplateP, fitIh, fitP, false);
-    //bckgEstimate(st_sample, dirname, rb_70ias80, rc_ias50, rbc_70ias80, ra_ias50, rd_70ias80, "70ias80", nPE, corrTemplateIh, corrTemplateP, fitIh, fitP, false);
-    //bckgEstimate(st_sample, dirname, rb_80ias90, rc_ias50, rbc_80ias90, ra_ias50, rd_80ias90, "80ias90", nPE, corrTemplateIh, corrTemplateP, fitIh, fitP, false);
+    bckgEstimate(st_sample, dirname, rb_50ias60, rc_ias50, rbc_50ias60, ra_ias50, rd_50ias60, "50ias60", nPE, corrTemplateIh, corrTemplateP, fitIh, fitP, false);
+    bckgEstimate(st_sample, dirname, rb_60ias70, rc_ias50, rbc_60ias70, ra_ias50, rd_60ias70, "60ias70", nPE, corrTemplateIh, corrTemplateP, fitIh, fitP, false);
+    bckgEstimate(st_sample, dirname, rb_70ias80, rc_ias50, rbc_70ias80, ra_ias50, rd_70ias80, "70ias80", nPE, corrTemplateIh, corrTemplateP, fitIh, fitP, false);
+    bckgEstimate(st_sample, dirname, rb_80ias90, rc_ias50, rbc_80ias90, ra_ias50, rd_80ias90, "80ias90", nPE, corrTemplateIh, corrTemplateP, fitIh, fitP, false);
 
-    //bckgEstimate(st_sample, dirname, rb_50ias90, rc_ias50, rbc_50ias90, ra_ias50, rd_50ias90, "50ias90", nPE, corrTemplateIh, corrTemplateP, fitIh, fitP, false);
+    bckgEstimate(st_sample, dirname, rb_50ias90, rc_ias50, rbc_50ias90, ra_ias50, rd_50ias90, "50ias90", nPE, corrTemplateIh, corrTemplateP, fitIh, fitP, false);
     
     bckgEstimate(st_sample, dirname, rb_90ias100, rc_ias50, rbc_90ias100, ra_ias50, rd_90ias100, "90ias100", nPE, corrTemplateIh, corrTemplateP, fitIh, fitP, false);
     bckgEstimate(st_sample, dirname, rb_99ias100, rc_ias50, rbc_99ias100, ra_ias50, rd_99ias100, "99ias100", nPE, corrTemplateIh, corrTemplateP, fitIh, fitP, false);
+
     bckgEstimate(st_sample, dirname, rb_999ias100, rc_ias50, rbc_999ias100, ra_ias50, rd_999ias100, "999ias100", nPE, corrTemplateIh, corrTemplateP, fitIh, fitP, false);
 
     delete ofile;

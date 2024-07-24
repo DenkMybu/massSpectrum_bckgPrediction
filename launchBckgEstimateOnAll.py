@@ -6,25 +6,30 @@ parser = OptionParser(usage="Usage: python %prog codeVersion")
 (opt,args) = parser.parse_args()
 
 datasetList=[
-    "\/opt\/sbg\/cms\/ui3_data1\/dapparu\/HSCP\/Production\/crab\_Analysis\_SingleMuon\_Run2017\_CodeVUnB\_v1\_v1",
+    #"\/opt\/sbg\/cms\/ui3_data1\/dapparu\/HSCP\/Production\/crab\_Analysis\_SingleMuon\_Run2017\_CodeVUnB\_v1\_v1",
     #"\/opt\/sbg\/cms\/ui3_data1\/dapparu\/HSCP\/Production\/crab\_Analysis\_SingleMuon\_Run2018\_CodeVUnB\_v1\_v1"
+    "\/opt\/sbg\/cms\/ui3_data1\/rhaeberl\/HSCP_prod\/Dylan\/Unblinded\/SingleMuon\_2017\_Raph",
+    "\/opt\/sbg\/cms\/ui3_data1\/rhaeberl\/HSCP_prod\/Dylan\/Unblinded\/SingleMuon\_2018\_Raph"
+ 
+    #"\/opt\/sbg\/cms\/ui4_data1\/rhaeberl\/CMSSW_10_6_30\/src\/HSCPTreeAnalyzer\/macros\/Data_good\/massReco_pt70\/0p3\/Mu2017\_massCut\_0\_pT70\_Vgi0p3\_Gstrip",
+    #"\/opt\/sbg\/cms\/ui4_data1\/rhaeberl\/CMSSW_10_6_30\/src\/HSCPTreeAnalyzer\/macros\/Data_good\/massReco_pt70\/0p3\/Mu2018\_massCut\_0\_pT70\_Vgi0p3\_Gstrip"
 ]
 tagKC=[
     "data2017",
     "data2018",
 ]
 odir=[
-    "test\_2017\_label\_UnB_v1_v2\/",
-    "test\_2018\_label\_UnB_v1_v2\/",
+    "test\_2017\_label\_FitsTest\/",
+    "test\_2018\_label\_FitsTest\/",
 ]
 
 nPE="200"
 
 config=[
-    ["nominal", "4", "4", "2", "0", "0", "1", "1"],
-    #["etaup", "2", "4", "2", "0", "0", "1", "1"],
+    #["nominal", "4", "4", "2", "0", "0", "1", "1"],
+    ["etaup", "2", "4", "2", "0", "0", "1", "1"],
     #["etadown", "8", "4", "2", "0", "0", "1", "1"],
-    #["ihup", "4", "2", "2", "0", "0", "1", "1"],
+    #["ihup", "4", "2", "2", "0", "0", "1", "1"],   
     #["ihdown", "4", "8", "2", "0", "0", "1", "1"],
     #["momup", "4", "4", "1", "0", "0", "1", "1"],
     #["momdown", "4", "4", "4", "0", "0", "1", "1"],
