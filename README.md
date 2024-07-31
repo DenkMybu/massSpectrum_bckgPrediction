@@ -32,6 +32,13 @@ This part concerns the run of the background estimate method.
 python launchBckgEstimateOnAll.py
 ```
 
+The following script allows to run all the configurations associated to each systematic automatically. You should use a screen because it may take several days (runs each region for both 2017 and 2018) :
+
+```bash
+python test_launch_all.py
+```
+
+
 You can change on what you want to run directly in ```launchBckgEstimateOnAll.py``` and ```step2_backgroundPrediction.C``` files. 
 
 In the first file (```launchBckgEstimateOnAll.py```): 
@@ -55,11 +62,21 @@ In the case you see normalisation problems (especially in control regions), be s
 ## Run the mass spectrum plotter code
 
 This part concerns the run of mass spectrum plotter code, with nice style. 
+The path where all the scripts are is :
+```bash
+/opt/sbg/cms/ui6_data1/rhaeberl/CMSSW_10_6_30/src/massSpectrum_bckgPrediction
+```
 
 The code runs with the command: 
 ```bash
 python2.7 macroMass.py --ifile /opt/sbg/cms/ui3_data1/dapparu/HSCP/Production/crab_Analysis_SingleMuon_Run2017_CodeVUnB_v1_v1_cutIndex3_rebinEta4_rebinIh4_rebinP2_rebinMass1_nPE200_test_v1.root --ofile test1 --region 999ias100 --odir test
 ```
+
+You can also use the following python script to run the plotting macro on all chosen regions :
+```bash
+python ShowPreds.py
+```
+
 
 Concerniing the options:
 - option ```--ifile``` is for the input file; obtained at the previous step. 
